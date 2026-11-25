@@ -148,17 +148,29 @@ fieldset{border:0;padding:0;margin:0;display:grid;gap:8px}
 .type button{justify-self:start;font-family:var(--f-label);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.82rem;background:transparent;color:var(--teal);border:0;border-bottom:2px solid currentColor;padding:2px 0;cursor:pointer}
 
 /* Give page */
-.giver{background:#1d2a31;color:var(--paper);border-radius:10px;padding:26px;display:grid;gap:18px;border-top:10px solid var(--red)}
+.giver{background:#1d2a31;color:var(--paper);border-radius:10px;padding:26px;display:grid;gap:18px;border-top:10px solid var(--red);position:relative}
 .readout{background:#0c1215;border:3px solid #3a474d;border-radius:6px;padding:12px 16px;display:flex;justify-content:space-between;align-items:baseline;font-variant-numeric:tabular-nums}
 .readout .lbl{font-family:var(--f-label);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:#9fb0b4}
 .readout .amt{font-family:var(--f-display);font-size:2.2rem;color:#f0c445;letter-spacing:.04em}
 .amts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.amts button,.freq button{font-family:var(--f-label);font-weight:700;font-size:1rem;padding:12px 6px;border-radius:4px;border:2px solid #3a474d;background:transparent;color:#efe8d9;cursor:pointer}
+.amts button,.freq button{font-family:var(--f-label);font-weight:700;font-size:1rem;padding:12px 6px;border-radius:4px;border:2px solid #6b7c82;background:transparent;color:#efe8d9;cursor:pointer}
 .amts button[aria-pressed="true"],.freq button[aria-pressed="true"]{background:#f0c445;color:#1d2a31;border-color:#f0c445}
+.amts button:disabled,.freq button:disabled,.giver input:disabled,.giver .consent input:disabled{opacity:.7;cursor:not-allowed}
 .freq{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.giver input[type=text]{background:#0c1215;color:#efe8d9;border-color:#3a474d}
+.giver fieldset{min-inline-size:0}
+.giver legend{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.giver input[type=text]{background:#0c1215;color:#efe8d9;border-color:#6b7c82}
 .giver .label{color:#f0c445}
 .giver .msg{font-size:.9rem;color:#c9d3d5}
+.giver .hint{font-size:.82rem;color:#9fb0b4}
+.giver .g-err{font-size:.92rem;color:#ffd0c8;background:#3a1d1a;border-left:4px solid #e0574b;padding:8px 12px;border-radius:4px}
+.giver .g-err:not(.has-msg){position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.giver .g-result{scroll-margin-top:200px;font-size:.95rem;color:#1d2a31;background:#efe8d9;border-left:6px solid #f0c445;padding:12px 14px;border-radius:4px}
+.giver .g-result.cancel{border-left-color:#9fb0b4}
+.giver .g-result strong{display:block;font-family:var(--f-label);text-transform:uppercase;letter-spacing:.08em;font-size:.8rem;margin-bottom:2px}
+.giver .consent{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;font-size:.9rem;color:#efe8d9;line-height:1.45;cursor:pointer}
+.giver .consent input{width:22px;height:22px;margin:1px 0 0;accent-color:#f0c445;flex:none}
+.giver #g-go[disabled]{opacity:.7;cursor:progress}
 .impact{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
 .impact div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px;display:grid;gap:6px}
 .impact .amt2{font-family:var(--f-display);font-size:1.5rem;color:var(--red)}
@@ -480,26 +492,30 @@ img{max-width:100%}
         </div>
       </div>
 
-      <div class="giver" aria-label="Give">
+      <div class="giver" role="region" aria-label="Give">
+        <div class="g-result" id="g-result" role="status" tabindex="-1" hidden></div>
         <p class="label">Fill it up</p>
         <div class="readout"><span class="lbl">Total sale</span><span class="amt" id="g-readout">$50.00</span></div>
-        <div class="freq" role="group" aria-label="Frequency">
+        <fieldset class="freq">
+          <legend>Frequency</legend>
           <button type="button" data-freq="once" aria-pressed="true">One time</button>
           <button type="button" data-freq="monthly" aria-pressed="false">Monthly</button>
-        </div>
-        <div class="amts" role="group" aria-label="Amount">
+        </fieldset>
+        <fieldset class="amts">
+          <legend>Amount</legend>
           <button type="button" data-amt="25" aria-pressed="false">$25</button>
           <button type="button" data-amt="50" aria-pressed="true">$50</button>
           <button type="button" data-amt="100" aria-pressed="false">$100</button>
           <button type="button" data-amt="250" aria-pressed="false">$250</button>
           <button type="button" data-amt="500" aria-pressed="false">$500</button>
           <button type="button" data-amt="other" aria-pressed="false">Other</button>
-        </div>
-        <div class="field" id="g-other-wrap" hidden><label for="g-other" style="color:#f0c445">Other amount</label><input type="text" id="g-other" inputmode="decimal" placeholder="$"></div>
+        </fieldset>
+        <div class="field" id="g-other-wrap" hidden><label for="g-other" style="color:#f0c445">Other amount</label><input type="text" id="g-other" inputmode="decimal" autocomplete="off" placeholder="$" aria-describedby="g-limits"><span class="hint" id="g-limits">Any amount from $1 to $10,000.</span></div>
         <p class="msg" id="g-impact"></p>
+        <label class="consent" id="g-consent-wrap" hidden><input type="checkbox" id="g-consent"><span id="g-consent-text">I understand I'll be charged <span id="g-consent-amt">$50.00</span> today and every month after until I cancel. To cancel or change my monthly gift, contact us.</span></label>
+        <p class="g-err" id="g-err" role="alert"><span id="g-err-text"></span></p>
         <button class="btn yellow" type="button" id="g-go">Give $50.00</button>
-        <p class="msg">You'll confirm your amount and payment details on our secure giving page.</p>
-        <p class="msg" id="g-note" hidden>Online giving is being set up. Please check back soon.</p>
+        <p class="msg">You'll confirm your amount and payment details on our secure giving page, hosted by our payment processor, Stripe.</p>
         <p class="msg">Prefer to mail a check? Make it out to The Filling Station. Mailing address coming soon.</p>
       </div>
     </div>
@@ -678,8 +694,9 @@ img{max-width:100%}
   }});
   renderCrews();
 
-  // ===== SETTINGS: paste your giving page link between the quotes =====
-  var GIVE_URL="";
+  // ===== SETTINGS: online giving (Stripe Checkout via a Netlify Function) =====
+  var GIVE_ENDPOINT="/.netlify/functions/create-checkout-session";
+  var GIVE_MIN=1, GIVE_MAX=10000; // dollars; the server enforces its own limits too
   // Sends a form to Netlify Forms
   function sendForm(f,errEl,done){
     var btn=f.querySelector('button[type="submit"]'); var t=btn.textContent; btn.disabled=true; btn.textContent="Sending…";
@@ -727,31 +744,120 @@ img{max-width:100%}
   document.getElementById("p-ok-reset").onclick=function(){pForm.reset();pForm.hidden=false;document.getElementById("partner-ok").hidden=true;};
 
   // Giving
-  var amt=50, freq="once";
+  var amt=50, freq="once", busy=false, donationView="";
   var IMPACT=[[500,"Covers a month of help for a rider in crisis."],[250,"Launches a new Road Crew with training and materials."],[100,"Equips a new Road Crew leader with the Field Guide and training."],[25,"Welcomes a new rider at a bike night, with follow-up."],[0,"Every gallon counts. Thank you."]];
+  var AMOUNT_RE=/^\d+(?:\.\d{0,2})?$/;
   function fmt(n){return "$"+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",");}
+  function parseAmount(raw){
+    var s=String(raw||"").trim().replace(/^\$/,"").replace(/,/g,"");
+    if(s==="") return {amt:0, bad:false};
+    if(!AMOUNT_RE.test(s)) return {amt:0, bad:true};
+    var n=parseFloat(s);
+    return {amt:isNaN(n)?0:n, bad:false};
+  }
   function updateGive(){
     var label=fmt(amt)+(freq==="monthly"?" / mo":"");
     document.getElementById("g-readout").textContent=label;
-    document.getElementById("g-go").textContent=amt>0?"Give "+label:"Enter an amount";
+    if(!busy) document.getElementById("g-go").textContent=amt>0?"Give "+label:"Enter an amount";
     var line=IMPACT.find(function(r){return amt>=r[0]});
     document.getElementById("g-impact").textContent=amt>0?line[1]+(freq==="monthly"?" Every month.":""):"";
+    var m=freq==="monthly";
+    document.getElementById("g-consent-wrap").hidden=!m;
+    if(!m)document.getElementById("g-consent").checked=false;
+    document.getElementById("g-consent-amt").textContent=fmt(amt);
   }
   document.querySelectorAll("[data-amt]").forEach(function(b){b.onclick=function(){
+    if(busy)return;
     document.querySelectorAll("[data-amt]").forEach(function(x){x.setAttribute("aria-pressed","false")});
     b.setAttribute("aria-pressed","true");
     var other=b.dataset.amt==="other";
     document.getElementById("g-other-wrap").hidden=!other;
-    if(other){var v=parseFloat(document.getElementById("g-other").value.replace(/[^0-9.]/g,""));amt=isNaN(v)?0:v;document.getElementById("g-other").focus();}
+    if(other){amt=parseAmount(document.getElementById("g-other").value).amt;document.getElementById("g-other").focus();}
     else amt=+b.dataset.amt;
+    clearInvalid();
     updateGive();
   }});
-  document.getElementById("g-other").oninput=function(){var v=parseFloat(this.value.replace(/[^0-9.]/g,""));amt=isNaN(v)?0:v;updateGive();};
+  document.getElementById("g-other").oninput=function(){amt=parseAmount(this.value).amt;clearInvalid();updateGive();};
   document.querySelectorAll("[data-freq]").forEach(function(b){b.onclick=function(){
+    if(busy)return;
     document.querySelectorAll("[data-freq]").forEach(function(x){x.setAttribute("aria-pressed","false")});
-    b.setAttribute("aria-pressed","true");freq=b.dataset.freq;updateGive();
+    b.setAttribute("aria-pressed","true");freq=b.dataset.freq;clearInvalid();updateGive();
   }});
-  document.getElementById("g-go").onclick=function(){if(GIVE_URL){window.open(GIVE_URL,"_blank","noopener");}else{document.getElementById("g-note").hidden=false;}};
+  var gGo=document.getElementById("g-go"), gErr=document.getElementById("g-err"), gErrText=document.getElementById("g-err-text"), gOther=document.getElementById("g-other"), gConsent=document.getElementById("g-consent"), gResult=document.getElementById("g-result"), attempt=null, attemptSig="";
+  // One idempotency key per distinct gift attempt; retrying the same gift reuses it.
+  function attemptFor(sig){if(sig!==attemptSig||!attempt){attemptSig=sig;attempt=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():null;}return attempt;}
+  function clearInvalid(){
+    gOther.removeAttribute("aria-invalid");
+    gOther.setAttribute("aria-describedby","g-limits");
+    gConsent.removeAttribute("aria-invalid");
+    gConsent.removeAttribute("aria-describedby");
+    gGo.removeAttribute("aria-invalid");
+    gGo.removeAttribute("aria-describedby");
+    gErrText.textContent="";
+    gErr.classList.remove("has-msg");
+  }
+  function giveErr(msg, field){
+    gErrText.textContent=msg||"";
+    gErr.classList.toggle("has-msg", !!msg);
+    if(!msg){clearInvalid();return;}
+    if(!field)return;
+    field.setAttribute("aria-invalid","true");
+    field.setAttribute("aria-describedby","g-err");
+  }
+  function setBusy(on){
+    busy=on;
+    gGo.disabled=on;
+    gGo.setAttribute("aria-busy",on?"true":"false");
+    document.querySelectorAll("[data-amt],[data-freq]").forEach(function(el){el.disabled=on;});
+    gOther.disabled=on;
+    gConsent.disabled=on;
+    if(on) gGo.textContent="Opening secure checkout…";
+    else updateGive();
+  }
+  gConsent.onchange=function(){clearInvalid();};
+  gGo.onclick=function(){
+    if(busy)return;
+    clearInvalid();
+    var otherOn=!document.getElementById("g-other-wrap").hidden;
+    if(otherOn){
+      var parsed=parseAmount(gOther.value);
+      if(parsed.bad){giveErr("Please enter dollars and cents only, like 25 or 25.50.", gOther);gOther.focus();return;}
+      amt=parsed.amt;
+      updateGive();
+    }
+    if(!(amt>0)){giveErr("Enter an amount to give.", otherOn?gOther:gGo);if(otherOn)gOther.focus();else gGo.focus();return;}
+    if(amt<GIVE_MIN||amt>GIVE_MAX){giveErr("Please enter an amount from "+fmt(GIVE_MIN)+" to "+fmt(GIVE_MAX)+".", otherOn?gOther:gGo);if(otherOn)gOther.focus();return;}
+    var cents=Math.round(amt*100);
+    if(Math.abs(amt*100-cents)>1e-6){giveErr("Please enter dollars and cents only, like 25 or 25.50.", gOther);gOther.focus();return;}
+    if(freq==="monthly"&&!gConsent.checked){giveErr("Please check the box to confirm your monthly gift.", gConsent);gConsent.focus();return;}
+    var payload={amount_cents:cents,frequency:freq==="monthly"?"monthly":"one_time",currency:"usd"};
+    if(freq==="monthly")payload.monthly_consent=true;
+    var key=attemptFor(payload.frequency+":"+cents);
+    if(key)payload.idempotency_key=key;
+    setBusy(true);
+    fetch(GIVE_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)})
+      .then(function(r){return r.json().catch(function(){return {};}).then(function(d){return {ok:r.ok,d:d};});})
+      .then(function(res){
+        if(res.ok&&res.d&&typeof res.d.url==="string"&&res.d.url.indexOf("https://checkout.stripe.com/")===0){window.location.assign(res.d.url);return;}
+        setBusy(false);giveErr((res.d&&res.d.error)||"Something went wrong starting your gift. Please try again.", gGo);gGo.focus();
+      })
+      .catch(function(){setBusy(false);giveErr("We couldn't reach our giving page. Check your connection and try again.", gGo);gGo.focus();});
+  };
+  // Coming back from Checkout with the browser's Back button restores this page from cache.
+  addEventListener("pageshow",function(e){if(e.persisted){attempt=null;if(busy)setBusy(false);}});
+  // Result of a Checkout visit: ?donation=success|cancel (set by the server's success/cancel URLs)
+  (function(){
+    var p; try{p=new URLSearchParams(location.search).get("donation");}catch(_){return;}
+    if(p!=="success"&&p!=="cancel")return;
+    donationView="give";
+    gResult.className="g-result"+(p==="cancel"?" cancel":"");
+    gResult.innerHTML=p==="success"
+      ?"<strong>Thank you for giving</strong>Your gift was submitted. You'll get an email confirmation from Stripe, our payment processor."
+      :"<strong>Gift cancelled</strong>You weren't charged. You can choose an amount and try again anytime.";
+    gResult.hidden=false;
+    try{history.replaceState(null,"",location.pathname+"#give");}catch(_){}
+    setTimeout(function(){gResult.focus();},50);
+  })();
   updateGive();
 
   // Home: scroll reveals + parallax
@@ -804,7 +910,10 @@ img{max-width:100%}
     e.preventDefault(); try{history.replaceState(null,"","#"+v)}catch(_){}
     show(v);
   });
-  show((location.hash||"#home").slice(1));
+  var initial=(location.hash||"").replace(/^#/,"");
+  if(donationView) initial=donationView;
+  else if(VIEWS.indexOf(initial)<0) initial="home";
+  show(initial);
 })();
 </script>
 </body>

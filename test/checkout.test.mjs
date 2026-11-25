@@ -202,6 +202,12 @@ describe('handler', () => {
     assert.equal(stripe.calls.length, 0);
     assert.match((await res.json()).error, /unavailable/i);
   });
+  test('http localhost SITE_URL is ignored unless ALLOW_LOCALHOST=true', () => {
+    assert.equal(loadConfig({ ...baseEnv, SITE_URL: 'http://localhost:8888' }).siteUrl, null);
+    assert.equal(loadConfig({ ...baseEnv, SITE_URL: 'http://127.0.0.1:8888' }).siteUrl, null);
+    assert.equal(loadConfig({ ...baseEnv, SITE_URL: 'http://[::1]:8888' }).siteUrl, null);
+    assert.equal(loadConfig({ ...baseEnv, SITE_URL: 'http://localhost:8888', ALLOW_LOCALHOST: 'true' }).siteUrl, 'http://localhost:8888');
+  });
   test('localhost only allowed when ALLOW_LOCALHOST=true', async () => {
     const local = 'http://localhost:8888';
     const a = setup({ env: { ALLOWED_ORIGINS: local } });
@@ -222,6 +228,15 @@ describe('handler', () => {
     const r = [];
     for (let i = 0; i < 3; i++) r.push((await handler(post({ amount_cents: 500, frequency: 'one_time' }))).status);
     assert.deepEqual(r, [200, 200, 429]);
+  });
+  test('rate limiter drops expired buckets before they pile up', () => {
+    let t = 0;
+    const allow = createRateLimiter({ limit: 5, windowMs: 1000, now: () => t });
+    for (let i = 0; i < 300; i++) allow(`ip-${i}`);
+    assert.equal(allow.size(), 300);
+    t = 1000;
+    assert.equal(allow('someone-new'), true);
+    assert.equal(allow.size(), 1);
   });
   test('missing or publishable key -> 503 generic, no Stripe call', async () => {
     for (const key of ['', 'pk_test_placeholder', 'sk_live_', 'not-a-key']) {

@@ -45,6 +45,11 @@ export function interpretEvent(event) {
   switch (event.type) {
     case 'checkout.session.completed':
     case 'checkout.session.async_payment_succeeded': {
+      // Sessions we create carry metadata.source. Anything else on the account
+      // is not a website gift, including a session with no source at all.
+      if (!obj.metadata || obj.metadata.source !== GIFT_SOURCE) {
+        return { gifts: [], note: `session ${obj.id} ignored (not a website gift)` };
+      }
       if (obj.mode === 'subscription') {
         return { gifts: [], note: `monthly signup ${obj.id} sub=${idOf(obj.subscription)}` };
       }
@@ -125,8 +130,22 @@ export function createWebhookHandler({ config, getStripe, getStore, logger = con
       return json(200, { received: true, ignored: true });
     }
 
-    const store = await getStore();
-    const fresh = await store.claim(event.id);
+    // Store setup and the claim sit in their own try. A failure here means we
+    // do not hold the claim, so there is nothing to release. 500 asks Stripe to retry.
+    let store;
+    try {
+      store = await getStore();
+    } catch (err) {
+      logger.error('[stripe-webhook] store unavailable', event.id, event.type, err && err.name);
+      return json(500, { error: 'Processing failed.' });
+    }
+    let fresh;
+    try {
+      fresh = await store.claim(event.id);
+    } catch (err) {
+      logger.error('[stripe-webhook] claim failed', event.id, event.type, err && err.name);
+      return json(500, { error: 'Processing failed.' });
+    }
     if (!fresh) {
       logger.info('[stripe-webhook] duplicate', event.id, event.type);
       return json(200, { received: true, duplicate: true });
@@ -138,6 +157,7 @@ export function createWebhookHandler({ config, getStripe, getStore, logger = con
         const isNew = await store.putOnce(g.key, { ...g.record, event: event.id });
         if (!isNew) logger.info('[stripe-webhook] gift already recorded', g.key);
       }
+      await store.finish(event.id);
       logger.info('[stripe-webhook]', event.id, event.type, result.note);
       return json(200, { received: true });
     } catch (err) {

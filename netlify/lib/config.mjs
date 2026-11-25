@@ -92,7 +92,10 @@ export function loadConfig(env = process.env) {
     maxCents = DEFAULTS.maxCents;
   }
 
-  const siteUrl = normalizeOrigin(env.SITE_URL);
+  // Same http/localhost rule as the origin allowlist: a local SITE_URL must
+  // not become the success/cancel host unless local dev is explicitly on.
+  let siteUrl = normalizeOrigin(env.SITE_URL);
+  if (siteUrl && siteUrl.startsWith('http:') && env.ALLOW_LOCALHOST !== 'true') siteUrl = null;
 
   // Allowed browser origins: SITE_URL, extra ALLOWED_ORIGINS, and the URLs
   // Netlify injects for this deploy. http origins are ignored unless

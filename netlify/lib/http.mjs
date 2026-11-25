@@ -65,17 +65,21 @@ export async function readLimitedText(req, maxBytes) {
 // one warm instance; it is a speed bump, not a security boundary.
 export function createRateLimiter({ limit = 10, windowMs = 60_000, now = () => Date.now() } = {}) {
   const hits = new Map();
-  return function allow(key) {
+  function allow(key) {
     const t = now();
+    // Drop expired buckets before the map can grow without bound. The old
+    // 5000-key cap left quiet addresses around until that cap was hit.
+    if (hits.size > 256) {
+      for (const [k, v] of hits) if (t - v.start >= windowMs) hits.delete(k);
+    }
     const entry = hits.get(key);
     if (!entry || t - entry.start >= windowMs) {
       hits.set(key, { start: t, count: 1 });
-      if (hits.size > 5000) {
-        for (const [k, v] of hits) if (t - v.start >= windowMs) hits.delete(k);
-      }
       return true;
     }
     entry.count += 1;
     return entry.count <= limit;
-  };
+  }
+  allow.size = () => hits.size;
+  return allow;
 }

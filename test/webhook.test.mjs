@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
 import Stripe from 'stripe';
 import { loadConfig } from '../netlify/lib/config.mjs';
-import { createMemoryStore } from '../netlify/lib/store.mjs';
+import { createMemoryStore, CLAIM_STALE_MS } from '../netlify/lib/store.mjs';
 import { createWebhookHandler, interpretEvent, subscriptionIdFromInvoice } from '../netlify/lib/webhook.mjs';
 
 // Real SDK used only for offline signature checks; no network calls are made.
@@ -11,9 +11,9 @@ const sdk = new Stripe('rk_test_placeholder');
 const SECRET = 'whsec_' + randomBytes(16).toString('hex'); // generated per run, never stored
 const quiet = { info() {}, warn() {}, error() {} };
 
-function setup({ store = createMemoryStore(), env = {} } = {}) {
+function setup({ store = createMemoryStore(), env = {}, getStore } = {}) {
   const config = loadConfig({ STRIPE_SECRET_KEY: 'rk_test_placeholder', STRIPE_WEBHOOK_SECRET: SECRET, SITE_URL: 'https://thefillingstationchurch.org', ...env });
-  const handler = createWebhookHandler({ config, getStripe: () => sdk, getStore: async () => store, logger: quiet });
+  const handler = createWebhookHandler({ config, getStripe: () => sdk, getStore: getStore || (async () => store), logger: quiet });
   return { handler, store };
 }
 
@@ -32,8 +32,8 @@ function signed(event, { secret = SECRET, tamper = false } = {}) {
   });
 }
 
-const paidSession = (id = 'cs_test_a') => ({ id, object: 'checkout.session', mode: 'payment', payment_status: 'paid', amount_total: 5000, currency: 'usd', payment_intent: 'pi_test_a' });
-const subSession = (id = 'cs_test_s') => ({ id, object: 'checkout.session', mode: 'subscription', payment_status: 'paid', amount_total: 2500, currency: 'usd', subscription: 'sub_test_1' });
+const paidSession = (id = 'cs_test_a') => ({ id, object: 'checkout.session', mode: 'payment', payment_status: 'paid', amount_total: 5000, currency: 'usd', payment_intent: 'pi_test_a', metadata: { source: 'website_give_page' } });
+const subSession = (id = 'cs_test_s') => ({ id, object: 'checkout.session', mode: 'subscription', payment_status: 'paid', amount_total: 2500, currency: 'usd', subscription: 'sub_test_1', metadata: { source: 'website_give_page' } });
 const invoice = (id, reason) => ({ id, object: 'invoice', amount_paid: 2500, currency: 'usd', billing_reason: reason, parent: { type: 'subscription_details', subscription_details: { subscription: 'sub_test_1' } } });
 
 const gifts = (store) => [...store._map.entries()].filter(([k]) => k.startsWith('session_') || k.startsWith('invoice_'));
@@ -67,6 +67,25 @@ describe('signature verification', () => {
     const { handler } = setup({ env: { STRIPE_WEBHOOK_SECRET: '' } });
     const res = await handler(signed(evt('invoice.paid', invoice('in_x', 'subscription_cycle'))));
     assert.equal(res.status, 500);
+  });
+  test('store outage returns 500 and does not throw', async () => {
+    const { handler } = setup({ getStore: async () => { throw new Error('blobs down'); } });
+    const res = await handler(signed(evt('checkout.session.completed', paidSession())));
+    assert.equal(res.status, 500);
+    assert.match(await res.text(), /Processing failed/);
+  });
+  test('claim failure returns 500 without releasing a claim', async () => {
+    let released = false;
+    const store = {
+      async claim() { throw new Error('claim down'); },
+      async release() { released = true; },
+      async putOnce() { throw new Error('should not record'); },
+      async finish() { throw new Error('should not finish'); },
+    };
+    const { handler } = setup({ getStore: async () => store });
+    const res = await handler(signed(evt('checkout.session.completed', paidSession())));
+    assert.equal(res.status, 500);
+    assert.equal(released, false);
   });
   test('oversized body is rejected and nothing is stored', async () => {
     const { handler, store } = setup();
@@ -177,5 +196,29 @@ describe('helpers', () => {
     foreign.parent.subscription_details.metadata = { source: 'some_other_product' };
     const r = interpretEvent(evt('invoice.paid', foreign));
     assert.equal(r.gifts.length, 0);
+  });
+  test('checkout session is counted only when source is the website gift', () => {
+    const ours = interpretEvent(evt('checkout.session.completed', paidSession('cs_ours')));
+    assert.equal(ours.gifts.length, 1);
+    const other = interpretEvent(evt('checkout.session.async_payment_succeeded', { ...paidSession('cs_other'), metadata: { source: 'other_app' } }));
+    assert.equal(other.gifts.length, 0);
+    const bare = paidSession('cs_bare');
+    delete bare.metadata;
+    const missing = interpretEvent(evt('checkout.session.completed', bare));
+    assert.equal(missing.gifts.length, 0);
+  });
+});
+
+describe('claim lifetime', () => {
+  test('a stale processing claim can be retried; a finished claim cannot', async () => {
+    let t = 1_000_000;
+    const store = createMemoryStore({ now: () => t });
+    assert.equal(await store.claim('evt_a'), true);
+    assert.equal(await store.claim('evt_a'), false);
+    t += CLAIM_STALE_MS;
+    assert.equal(await store.claim('evt_a'), true);
+    await store.finish('evt_a');
+    t += CLAIM_STALE_MS;
+    assert.equal(await store.claim('evt_a'), false);
   });
 });

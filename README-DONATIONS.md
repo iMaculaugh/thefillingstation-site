@@ -69,7 +69,7 @@ Server-side checks, in order:
 - currency is decided by the server; a client value must match
 - frequency is `one_time` or `monthly`
 - `STRIPE_SECRET_KEY` must look like a restricted or secret key (`rk_` or `sk_`, test or live). A missing or publishable key returns 503 and does not call Stripe.
-- `SITE_URL` must be an `https` origin. If it is missing, the function returns 503 and does not call Stripe. It does not fall back to the request origin.
+- `SITE_URL` must be an `https` origin. An `http://localhost`, `127.0.0.1`, or `[::1]` value is ignored unless `ALLOW_LOCALHOST=true`. If it is missing or ignored, the function returns 503 and does not call Stripe. It does not fall back to the request origin.
 - Idempotency key `give-<client uuid or a server uuid>-<frequency>-<amount>`, so a retried click reuses the session and a changed amount does not reuse a key with different parameters.
 - The URL returned to the browser must start with `https://checkout.stripe.com/`.
 
@@ -84,11 +84,12 @@ Environment variables inside the functions are read with `Netlify.env.get`. `pro
 - Verifies `Stripe-Signature` against the **raw request bytes** with `STRIPE_WEBHOOK_SECRET` before parsing. A bad signature is 400.
 - If the webhook secret or the API key is missing or the wrong shape, the function returns 500 (Stripe retries) and does not throw.
 - Bodies over 512 KB are rejected.
-- De-duplicates on `event.id` with Netlify Blobs (`onlyIfNew` on `events/<id>`). If processing throws, the claim is released and the function returns 500 so Stripe retries.
+- De-duplicates on `event.id` with Netlify Blobs (`onlyIfNew` on `events/<id>`). If opening the store or claiming the event throws, the function returns 500 and does not try to release a claim. If processing throws after a claim, the claim is released and the function returns 500 so Stripe retries. A claim left in `processing` (for example a timeout before release) can be taken again after 15 minutes. A finished claim stays, so a later delivery is a duplicate.
 - Counting rules, safe if events arrive out of order:
   - one-time: one record per Checkout Session when `payment_status` is `paid` (`checkout.session.completed` or `checkout.session.async_payment_succeeded`)
   - monthly: one record per invoice from `invoice.paid` only, including the first invoice (`billing_reason: subscription_create`). `checkout.session.completed` in subscription mode is logged and not counted.
-  - an `invoice.paid` whose subscription metadata `source` is present and is not `website_give_page` is ignored, so other products on the same Stripe account are not recorded. Invoices with no source metadata are still counted.
+  - a Checkout Session is recorded only when its `metadata.source` is `website_give_page`. A session with another source, or with no source, is ignored.
+  - an `invoice.paid` whose subscription metadata `source` is present and is not `website_give_page` is ignored, so other products on the same Stripe account are not recorded. Invoices with no source metadata are still counted, because Stripe does not always copy subscription metadata onto the invoice.
 - Logged only (not counted): `checkout.session.async_payment_failed`, `invoice.payment_failed`, `customer.subscription.deleted`, `charge.refunded`, `charge.dispute.created`, `radar.early_fraud_warning.created`. Refunds, disputes, and fraud warnings are logged with the prefix `ATTENTION`.
 - Stored fields: Stripe ids, amount, currency, livemode, timestamp, billing reason. No name, email, or card data.
 - The `donations` blob store is site-wide, so production and deploy previews share it unless `DONATIONS_BLOB_STORE` is set differently per deploy context. These keys are idempotency markers, not a donor database.
@@ -177,7 +178,7 @@ No live keys and no real cards. Use the deploy preview after sandbox env vars ar
 | 14 | Double-click | Press Give twice, or retry after a network error | The button disables. The same idempotency key reuses the session. |
 | 15 | Missing env | Open the preview before vars are set and press Give | Message that giving is unavailable. No Checkout page. Function does not throw. |
 
-Automated: `npm ci && npm test && npm run check` (48 tests). Tests mock Stripe and do not make network calls.
+Automated: `npm ci && npm test && npm run check` (54 tests). Tests mock Stripe and do not make network calls.
 
 ## Rollback
 

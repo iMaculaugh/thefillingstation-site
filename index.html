@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Filling Station</title>
+<meta name="description" content="The Filling Station is a motorcycle home church network. Find a Road Crew near you, lead one, partner with us, or support the mission.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Yellowtail&family=Archivo:wght@400;500;600;700&family=Archivo+Narrow:wght@500;600;700&display=swap">
+<style>
+/* Layout: a roadside station — enamel sign hero, pump-style panels, one view per "bay" (home, crews, lead, give) */
+:root{
+  --paper:#f4efe4; --paper-2:#ebe3d2; --ink:#1d2a31; --ink-soft:#4a5960;
+  --red:#b8322a; --red-ink:#ffffff; --teal:#2a7f7a; --yellow:#e9b72f; --line:#cfc4ad; --card:#fbf8f1;
+  --f-display:"Alfa Slab One", "Rockwell", Georgia, serif;
+  --f-script:"Yellowtail", "Brush Script MT", cursive;
+  --f-body:"Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-label:"Archivo Narrow", "Arial Narrow", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#141d22; --paper-2:#1b272d; --ink:#efe8d9; --ink-soft:#a9b4b6;
+  --red:#d9473d; --red-ink:#ffffff; --teal:#4fb3ac; --yellow:#f0c445; --line:#2f3d44; --card:#1a252b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#141d22; --paper-2:#1b272d; --ink:#efe8d9; --ink-soft:#a9b4b6;
+  --red:#d9473d; --red-ink:#ffffff; --teal:#4fb3ac; --yellow:#f0c445; --line:#2f3d44; --card:#1a252b; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+a{color:var(--teal)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;line-height:1.1;text-wrap:balance;margin:0}
+h2{font-size:clamp(1.7rem,4vw,2.4rem)}
+h3{font-size:1.25rem}
+p{margin:0}
+.label{font-family:var(--f-label);text-transform:uppercase;letter-spacing:.12em;font-weight:700;font-size:.8rem;color:var(--red)}
+.prose{max-width:62ch;display:grid;gap:14px;color:var(--ink-soft)}
+.stack{display:grid;gap:18px}
+section.band{padding-block:56px}
+.band.alt{background:var(--paper-2)}
+
+/* Draft ribbon + header */
+.draft{background:var(--yellow);color:#1d2a31;font-family:var(--f-label);font-weight:600;font-size:.85rem;text-align:center;padding-block:6px}
+header.top{background:var(--ink);color:var(--paper);position:sticky;top:env(safe-area-inset-top,0px);z-index:20;border-bottom:4px solid var(--red)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--ink)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:10px}
+.brand{display:flex;align-items:baseline;gap:8px;color:var(--paper);text-decoration:none}
+.brand .the{font-family:var(--f-script);font-size:1.3rem;color:var(--yellow)}
+.brand .name{font-family:var(--f-display);font-size:1.25rem;letter-spacing:.02em}
+nav.main{display:flex;gap:4px;flex-wrap:wrap}
+nav.main a{font-family:var(--f-label);font-weight:600;text-transform:uppercase;letter-spacing:.08em;font-size:.85rem;color:var(--paper);text-decoration:none;padding:6px 10px;border-radius:3px}
+nav.main a[aria-current="page"]{background:var(--red);color:var(--red-ink)}
+nav.main a.give-link{border:2px solid var(--yellow);color:var(--yellow)}
+nav.main a.give-link[aria-current="page"]{background:var(--yellow);color:#1d2a31}
+
+/* Buttons */
+.btn{display:inline-block;font-family:var(--f-label);font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:.95rem;padding:13px 22px;border-radius:4px;text-decoration:none;border:2px solid transparent;cursor:pointer}
+.btn.red{background:var(--red);color:var(--red-ink)}
+.btn.ghost{border-color:currentColor;color:var(--ink);background:transparent}
+.btn.yellow{background:var(--yellow);color:#1d2a31}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+
+/* Hero: enamel sign */
+.hero{padding-block:48px 56px;background:
+  repeating-linear-gradient(90deg,transparent 0 46px,color-mix(in srgb,var(--line) 45%,transparent) 46px 48px),var(--paper)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:40px;align-items:center}
+.hero h1{font-size:clamp(2.4rem,6.5vw,4.4rem)}
+.hero h1 .script{display:block;font-family:var(--f-script);color:var(--red);font-size:.75em;margin-bottom:4px}
+.hero .lede{font-size:1.15rem;color:var(--ink-soft);max-width:48ch}
+.sign{max-width:420px;justify-self:center;width:100%}
+.sign svg{width:100%;height:auto;display:block}
+
+/* Structure diagram */
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:28px;border:2px solid var(--ink);border-radius:6px;overflow:hidden}
+.flow > div{padding:22px;background:var(--card);display:grid;gap:8px;align-content:start;min-width:0}
+.flow > div + div{border-left:2px dashed var(--line)}
+.flow .tag{font-family:var(--f-label);font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.1em;font-size:.78rem}
+.flow p{color:var(--ink-soft);font-size:.95rem}
+
+/* Journey */
+.journey{list-style:none;padding:0;margin:28px 0 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;counter-reset:mile}
+.journey li{counter-increment:mile;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;gap:6px;align-content:start}
+.journey li::before{content:"MILE " counter(mile);font-family:var(--f-label);font-weight:700;letter-spacing:.12em;font-size:.75rem;color:var(--red)}
+.journey b{font-family:var(--f-display);font-weight:400;font-size:1.05rem}
+.journey span{color:var(--ink-soft);font-size:.92rem;line-height:1.45}
+
+/* Give CTA panel (pump) */
+.pump,.giver{--paper:#efe8d9;--yellow:#f0c445;--red:#c8392f}
+.pump{background:#1d2a31;color:var(--paper);border-radius:10px;border-top:10px solid var(--red);padding:32px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px}
+.pump h2{color:var(--paper)}
+.pump .label{color:var(--yellow)}
+.pump p{color:color-mix(in srgb,var(--paper) 78%,transparent)}
+.alloc{display:grid;gap:12px;align-content:start}
+.alloc-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;align-items:baseline;padding-bottom:12px;border-bottom:1px dashed color-mix(in srgb,var(--paper) 25%,transparent)}
+.alloc-row .pct{font-family:var(--f-display);font-size:1.6rem;color:var(--yellow);font-variant-numeric:tabular-nums;min-width:3.2ch;grid-row:span 2}
+.alloc-row b{font-weight:600}
+.alloc-row small{color:color-mix(in srgb,var(--paper) 70%,transparent);font-size:.88rem;line-height:1.4}
+.note{font-size:.82rem;font-style:italic}
+
+/* Three doors */
+.doors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
+.door{background:var(--card);border:2px solid var(--ink);border-radius:6px;padding:22px;display:grid;gap:10px;align-content:start}
+.door p{color:var(--ink-soft)}
+
+/* Forms */
+form.intake{display:grid;gap:18px;background:var(--card);border:2px solid var(--ink);border-radius:8px;padding:26px}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.field{display:grid;gap:6px;min-width:0}
+.field label,.field legend{font-family:var(--f-label);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.8rem}
+input[type=text],input[type=email],input[type=tel],select,textarea{font:inherit;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:4px;padding:10px 12px;width:100%}
+textarea{min-height:110px;resize:vertical}
+fieldset{border:0;padding:0;margin:0;display:grid;gap:8px}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.choice{display:flex;gap:8px;align-items:flex-start;font-size:.95rem;line-height:1.35;padding:10px;border:1.5px solid var(--line);border-radius:4px;background:var(--paper);cursor:pointer}
+.choice input{margin-top:3px;accent-color:var(--red)}
+.err{color:var(--red);font-size:.88rem;font-weight:600}
+.success{background:var(--card);border:2px solid var(--teal);border-radius:8px;padding:26px;display:grid;gap:12px}
+.steps{list-style:none;padding:0;margin:0;display:grid;gap:10px;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:2.2rem minmax(0,1fr);gap:10px;align-items:start}
+.steps li::before{content:counter(s);font-family:var(--f-display);background:var(--red);color:var(--red-ink);width:2rem;height:2rem;border-radius:50%;display:grid;place-items:center}
+.steps li span{color:var(--ink-soft)}
+.two{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:36px;align-items:start}
+.checklist{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.checklist li{padding-left:26px;position:relative;color:var(--ink-soft)}
+.checklist li::before{content:"";position:absolute;left:0;top:.45em;width:12px;height:12px;background:var(--teal);border-radius:2px}
+
+/* Crew finder */
+.finder{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:12px;align-items:end;background:var(--card);border:2px solid var(--ink);border-radius:8px;padding:18px}
+.crews{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.crew{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px;display:grid;gap:8px;align-content:start}
+.crew .chip{justify-self:start;font-family:var(--f-label);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.72rem;padding:3px 8px;border-radius:3px;background:var(--teal);color:#fff}
+.crew dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;font-size:.92rem}
+.crew dt{font-family:var(--f-label);font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;font-size:.78rem;padding-top:2px}
+.crew dd{margin:0}
+.crew .open{font-size:.85rem;color:var(--teal);font-weight:600}
+.crew .full{font-size:.85rem;color:var(--ink-soft);font-weight:600}
+.count{font-family:var(--f-label);color:var(--ink-soft);margin-top:14px}
+.empty{padding:24px;border:2px dashed var(--line);border-radius:6px;text-align:center;color:var(--ink-soft);margin-top:18px}
+.back{font-family:var(--f-label);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.82rem;text-decoration:none}
+.types{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
+.type{background:var(--card);border:2px solid var(--ink);border-radius:6px;padding:20px;display:grid;gap:10px;align-content:start;grid-template-rows:auto auto auto 1fr auto}
+.type .chip{justify-self:start;font-family:var(--f-label);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.72rem;padding:3px 8px;border-radius:3px;background:var(--teal);color:#fff}
+.type p{color:var(--ink-soft);font-size:.95rem;line-height:1.5}
+.type dl{margin:0;display:grid;gap:8px;font-size:.92rem}
+.type dt{font-family:var(--f-label);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.75rem;color:var(--red)}
+.type dd{margin:0;color:var(--ink-soft);line-height:1.45}
+.type .care{font-size:.85rem;font-style:italic}
+.type button{justify-self:start;font-family:var(--f-label);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.82rem;background:transparent;color:var(--teal);border:0;border-bottom:2px solid currentColor;padding:2px 0;cursor:pointer}
+
+/* Give page */
+.giver{background:#1d2a31;color:var(--paper);border-radius:10px;padding:26px;display:grid;gap:18px;border-top:10px solid var(--red)}
+.readout{background:#0c1215;border:3px solid #3a474d;border-radius:6px;padding:12px 16px;display:flex;justify-content:space-between;align-items:baseline;font-variant-numeric:tabular-nums}
+.readout .lbl{font-family:var(--f-label);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:#9fb0b4}
+.readout .amt{font-family:var(--f-display);font-size:2.2rem;color:#f0c445;letter-spacing:.04em}
+.amts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.amts button,.freq button{font-family:var(--f-label);font-weight:700;font-size:1rem;padding:12px 6px;border-radius:4px;border:2px solid #3a474d;background:transparent;color:#efe8d9;cursor:pointer}
+.amts button[aria-pressed="true"],.freq button[aria-pressed="true"]{background:#f0c445;color:#1d2a31;border-color:#f0c445}
+.freq{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.giver input[type=text]{background:#0c1215;color:#efe8d9;border-color:#3a474d}
+.giver .label{color:#f0c445}
+.giver .msg{font-size:.9rem;color:#c9d3d5}
+.impact{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
+.impact div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px;display:grid;gap:6px}
+.impact .amt2{font-family:var(--f-display);font-size:1.5rem;color:var(--red)}
+.impact p{color:var(--ink-soft);font-size:.92rem}
+
+footer{background:var(--ink);color:var(--paper);padding-block:36px;border-top:4px solid var(--red)}
+footer .wrap{display:grid;gap:10px}
+footer p{color:color-mix(in srgb,var(--paper) 72%,transparent);font-size:.9rem}
+footer .tagline{font-family:var(--f-script);color:var(--yellow);font-size:1.6rem}
+
+@media (max-width:820px){
+  .hero .wrap,.pump,.two{grid-template-columns:1fr}
+  .sign{max-width:240px;order:-1}
+  .flow{grid-template-columns:1fr}
+  .flow > div + div{border-left:0;border-top:2px dashed var(--line)}
+  .journey{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .doors,.impact{grid-template-columns:1fr}
+  .types{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .crews{grid-template-columns:1fr}
+  .finder{grid-template-columns:1fr 1fr}
+  .finder .btn{grid-column:1/-1}
+}
+@media (max-width:520px){
+  .row,.choices,.types{grid-template-columns:1fr}
+  .journey{grid-template-columns:1fr}
+  .pump{padding:22px}
+  .finder{grid-template-columns:1fr}
+}
+/* Home: parallax layers (decoration moves slower than the page) */
+.view > section:first-child,.view .band.alt{position:relative;overflow:hidden;isolation:isolate}
+.view > section:first-child::before,.view .band.alt::before{content:"";position:absolute;inset:-240px 0;z-index:-1;pointer-events:none;transform:translate3d(0,var(--py,0px),0)}
+.view > section:first-child:not(.alt)::before{background:
+  repeating-linear-gradient(180deg,color-mix(in srgb,var(--yellow) 55%,transparent) 0 46px,transparent 46px 104px) 6% 0/8px 100% no-repeat,
+  repeating-linear-gradient(180deg,color-mix(in srgb,var(--yellow) 55%,transparent) 0 46px,transparent 46px 104px) calc(6% + 18px) 0/8px 100% no-repeat;opacity:.55}
+.view .band.alt::before{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--line) 55%,transparent) 0 2px,transparent 2px 26px);opacity:.6}
+#v-home .sign{transform:translate3d(0,var(--sy,0px),0)}
+
+@media (prefers-reduced-motion:no-preference){
+  .view{animation:pull-in .35s ease-out}
+  @keyframes pull-in{from{transform:translateY(6px)}to{transform:none}}
+  #v-home .hero .script{animation:slide-sign .9s cubic-bezier(.2,.7,.2,1) both}
+  #v-home .hero .lede{animation:rise .9s .15s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes slide-sign{from{transform:translateX(-18px);opacity:.35}to{transform:none;opacity:1}}
+  @keyframes rise{from{transform:translateY(10px);opacity:.4}to{transform:none;opacity:1}}
+  .reveal{transition:opacity .7s ease,transform .75s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+  .reveal.pre{opacity:.2;transform:translateY(24px)}
+  .reveal.pre.slide{transform:translateX(-28px)}
+}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#home"><span class="the">The</span><span class="name">FILLING STATION</span></a>
+    <nav class="main" aria-label="Main">
+      <a href="#home" data-view="home">Home</a>
+      <a href="#crews" data-view="crews">Find a Crew</a>
+      <a href="#lead" data-view="lead">Lead a Crew</a>
+      <a href="#partner" data-view="partner">Church Partners</a>
+      <a href="#give" data-view="give" class="give-link">Give</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<!-- ============ HOME ============ -->
+<div class="view" id="v-home">
+  <section class="hero">
+    <div class="wrap">
+      <div class="stack">
+        <h1><span class="script">Pull in. Fill up.</span>Come as you are.</h1>
+        <p class="lede">The Filling Station is a church for riders and anyone who rides with them. Maybe you came for the bikes, the food, or the ride. We hope you stay for Jesus and the people who will ride beside you.</p>
+        <div class="btns">
+          <a class="btn red" href="#crews">Find a Road Crew</a>
+          <a class="btn ghost" href="#give">Support the mission</a>
+        </div>
+      </div>
+      <div class="sign" aria-hidden="true">
+        <svg viewBox="0 0 340 180" role="img">
+          <text x="170" y="60" text-anchor="middle" font-family="Yellowtail, cursive" font-size="46" style="fill:var(--red)">The Filling</text>
+          <text x="170" y="122" text-anchor="middle" font-family="Alfa Slab One, Georgia, serif" font-size="44" style="fill:var(--ink)">STATION</text>
+          <text x="170" y="160" text-anchor="middle" font-family="Archivo Narrow, sans-serif" font-weight="700" font-size="13" letter-spacing="2" style="fill:var(--teal)">A HOME CHURCH NETWORK</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="prose">
+        <p class="label">Who we are</p>
+        <h2 style="color:var(--ink)">One home base. Churches in garages, kitchens and driveways.</h2>
+        <p>The Filling Station is built to grow bigger and smaller at the same time. We gather big through bike nights, group rides and outreach events. We grow small through home churches led by trained Road Crews, where riders are known, cared for, discipled and sent.</p>
+      </div>
+      <div class="flow">
+        <div><span class="tag">Home base</span><h3>The Filling Station</h3><p>The main body of the church. Vision, teaching, training, events, baptism and support for every crew.</p></div>
+        <div><span class="tag">Leaders</span><h3>Road Crews</h3><p>Vetted, trained leaders who follow Jesus, ride safely, and care for people well. They connect, protect and help riders grow.</p></div>
+        <div><span class="tag">Where life happens</span><h3>Home churches</h3><p>Small gatherings around a ride, a garage night or a meal, with Scripture and prayer every time.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band alt">
+    <div class="wrap">
+      <div class="prose">
+        <p class="label">Why we exist</p>
+        <h2 style="color:var(--ink)">To reach the one rider with the hope of Jesus, until every rider has heard.</h2>
+        <p>A lot of riders are surrounded by people and still alone. Some have been hurt by churches. Some are skeptical. Some have never had a group of Christians they could trust. The motorcycle starts the conversation. Following Jesus gives it direction.</p>
+        <p>We are not trying to build an event people attend. We are building a road people can travel.</p>
+      </div>
+      <ol class="journey">
+        <li><b>First Encounter</b><span>You come for bikes, food or a ride, and you're welcomed.</span></li>
+        <li><b>Relationship</b><span>You come back and become known.</span></li>
+        <li><b>Gospel Moment</b><span>You hear real stories and the hope of Jesus.</span></li>
+        <li><b>Baptism &amp; Church</b><span>You take a public step of faith with a family.</span></li>
+        <li><b>Brotherhood &amp; Freedom</b><span>You find healing, prayer and accountability.</span></li>
+        <li><b>Road Crew</b><span>You grow in Scripture and community each week.</span></li>
+        <li><b>Serve Team</b><span>You start helping reach the next rider.</span></li>
+        <li><b>Sent Rider</b><span>You lead others down the same road.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="pump">
+        <div class="stack">
+          <p class="label">Fuel the mission</p>
+          <h2>Every gift puts another rider within reach of Jesus.</h2>
+          <p>Most of the people we want to reach will never walk into a church building on their own. Your support puts coffee in a stranger's hand at a bike night, training materials in a new leader's saddlebag, and help in the hands of a rider who just lost his job.</p>
+          <div class="btns"><a class="btn yellow" href="#give">Give now</a></div>
+        </div>
+        <div class="alloc" data-alloc></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band alt">
+    <div class="wrap">
+      <p class="label">Your next step</p>
+      <h2>Pick a lane.</h2>
+      <div class="doors">
+        <div class="door"><h3>Join a Road Crew</h3><p>Find a home church near you. You don't have to have everything figured out to belong.</p><a class="btn red" href="#crews">Find a crew</a></div>
+        <div class="door"><h3>Lead a Road Crew</h3><p>Already riding with people? Make it intentional. We'll train you and walk with you.</p><a class="btn ghost" href="#lead">Apply to lead</a></div>
+        <div class="door"><h3>Give</h3><p>Help us reach riders who would never come to us. See exactly where it goes.</p><a class="btn ghost" href="#give">Support the mission</a></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ FIND A CREW ============ -->
+<div class="view" id="v-crews" hidden>
+  <section class="band">
+    <div class="wrap stack">
+      <div class="prose">
+        <p class="label">Find a Road Crew</p>
+        <h2 style="color:var(--ink)">There's a seat at the table and room on the ride.</h2>
+        <p>Road Crews meet in homes, garages, diners and ride destinations across the country. Every crew includes brotherhood, an activity, prayer and Scripture. Pick a state, choose the kind of crew you'd like, and reach out. Come as you are.</p>
+        <p>Not sure which crew is right for you? Start with the crew types.</p>
+        <div class="btns"><a class="btn ghost" href="#types">Explore crew types</a></div>
+      </div>
+      <form class="finder" id="finder" onsubmit="return false">
+        <div class="field"><label for="f-state">State</label>
+          <select id="f-state"><option value="">All states</option></select></div>
+        <div class="field"><label for="f-type">Crew type</label>
+          <select id="f-type"><option value="">All types</option>
+            <option>Ride Crew</option><option>Garage Crew</option><option>Bible Crew</option>
+            <option>Outreach Crew</option><option>Freedom Crew</option><option>Family Ride Crew</option></select></div>
+        <button class="btn ghost" type="button" id="f-reset">Clear</button>
+      </form>
+      <p class="count" id="crew-count"></p>
+      <div class="crews" id="crew-list"></div>
+      <div class="empty" id="crew-empty" hidden>No crews here yet. That might mean you're the one to start it. <a href="#lead">Apply to lead a Road Crew</a>.</div>
+    </div>
+  </section>
+
+  <section class="band alt">
+    <div class="wrap two">
+      <div class="prose"><p class="label">What to expect</p><h2 style="color:var(--ink)">Your first night with a crew</h2></div>
+      <ol class="steps">
+        <li><span><b>Welcome and fellowship.</b> Coffee, food, a little bench racing. Nobody puts you on the spot.</span></li>
+        <li><span><b>The activity.</b> A ride, a bike project, a meal or a service project, depending on the crew.</span></li>
+        <li><span><b>Scripture.</b> A short passage and a few honest questions. Church words get explained.</span></li>
+        <li><span><b>Prayer.</b> Share what you want. Listening is fine too.</span></li>
+        <li><span><b>Next time.</b> You'll leave knowing when and where the crew meets again.</span></li>
+      </ol>
+    </div>
+  </section>
+</div>
+
+<!-- ============ CREW TYPES (not in menu) ============ -->
+<div class="view" id="v-types" hidden>
+  <section class="band">
+    <div class="wrap">
+      <div class="prose">
+        <a class="back" href="#crews">&larr; Back to Find a Crew</a>
+        <p class="label">Crew types</p>
+        <h2 style="color:var(--ink)">Six kinds of crews. Same road.</h2>
+        <p>Every crew gathers for brotherhood, an activity, prayer and Scripture. What changes is what you do together. Pick the one that sounds like you, or try a couple. Each card takes you straight to crews of that type.</p>
+      </div>
+      <div class="types">
+        <article class="type"><span class="chip">Ride Crew</span><h3>Ride, then talk</h3><p>A group ride with a stop for prayer, a short passage and real conversation.</p><dl><dt>Good fit if</dt><dd>You think best with the wind in your face and talk easiest over breakfast or at the overlook.</dd><dt>A typical gathering</dt><dd>Diner meetup, pre-ride briefing, a loop with a lead and sweep rider, Scripture and prayer at the stop.</dd></dl><button type="button" data-type="Ride Crew">Find a Ride Crew</button></article>
+        <article class="type"><span class="chip">Garage Crew</span><h3>Wrench and Word</h3><p>Bike maintenance, builds and projects, with a spiritual discussion worked in.</p><dl><dt>Good fit if</dt><dd>You'd rather have your hands busy than sit in a circle. New riders learn, experienced riders teach.</dd><dt>A typical gathering</dt><dd>Shop time on someone's bike, a break for food, a passage and a few questions, prayer before heading out.</dd></dl><button type="button" data-type="Garage Crew">Find a Garage Crew</button></article>
+        <article class="type"><span class="chip">Bible Crew</span><h3>Go deeper</h3><p>A more traditional Bible study for riders who want more Scripture and discipleship.</p><dl><dt>Good fit if</dt><dd>You're ready to dig into a book of the Bible and grow in your faith week to week.</dd><dt>A typical gathering</dt><dd>Coffee, a longer passage, open discussion with plenty of time for questions, and prayer for each other.</dd></dl><button type="button" data-type="Bible Crew">Find a Bible Crew</button></article>
+        <article class="type"><span class="chip">Outreach Crew</span><h3>Reach the next rider</h3><p>Serving the community, praying for people, supporting events and reaching riders.</p><dl><dt>Good fit if</dt><dd>You want your faith to have work boots on. You like rallies, bike nights and helping out.</dd><dt>A typical gathering</dt><dd>Prayer and a short devotional, then a service project, event support or welcome team at a bike night.</dd></dl><button type="button" data-type="Outreach Crew">Find an Outreach Crew</button></article>
+        <article class="type"><span class="chip">Freedom Crew</span><h3>Healing and freedom</h3><p>Support for riders walking through addiction, grief, anger, shame or church hurt.</p><dl><dt>Good fit if</dt><dd>You're carrying something heavy and need people who won't judge you and won't leave you alone with it.</dd><dt>A typical gathering</dt><dd>A safe, confidential circle, Scripture on hope and freedom, honest sharing, prayer, and help finding next steps.</dd></dl><p class="care">Led carefully with pastoral oversight. Not a replacement for counseling or recovery programs.</p><button type="button" data-type="Freedom Crew">Find a Freedom Crew</button></article>
+        <article class="type"><span class="chip">Family Ride Crew</span><h3>Bring everybody</h3><p>Spouses, kids, cookouts, shorter rides and discipleship together as families.</p><dl><dt>Good fit if</dt><dd>Riding is a family thing for you, or you want your kids to see faith lived out around the bikes.</dd><dt>A typical gathering</dt><dd>A short ride, a cookout at the park, a kid-friendly Bible story and family prayer.</dd></dl><button type="button" data-type="Family Ride Crew">Find a Family Ride Crew</button></article>
+      </div>
+    </div>
+  </section>
+  <section class="band alt">
+    <div class="wrap btns" style="justify-content:space-between;align-items:center">
+      <h3>Still not sure? Browse every crew near you.</h3>
+      <a class="btn red" href="#crews">Find a Road Crew</a>
+    </div>
+  </section>
+</div>
+
+<!-- ============ LEAD A CREW ============ -->
+<div class="view" id="v-lead" hidden>
+  <section class="band">
+    <div class="wrap two">
+      <div class="stack">
+        <div class="prose">
+          <p class="label">Lead a Road Crew</p>
+          <h2 style="color:var(--ink)">You don't need to be polished. You need to live what you lead.</h2>
+          <p>Road Crew leaders host home churches built around what riders already do: rides, garage nights, meals and service. You help people connect in community, protect one another through care, and grow in Jesus.</p>
+          <p>Fill out this form to get the Road Crew Leader Field Guide so you can read it before we talk.</p>
+        </div>
+        <div class="stack" style="gap:10px">
+          <p class="label">Every leader should be</p>
+          <ul class="checklist">
+            <li>A follower of Jesus, connected to a local church</li>
+            <li>Aligned with The Filling Station's mission</li>
+            <li>Faithful, dependable, safe and responsible</li>
+            <li>Humble, teachable and willing to pray with people</li>
+            <li>Able to keep confidence and to ask for help</li>
+          </ul>
+        </div>
+        <div class="stack" style="gap:10px">
+          <p class="label">The road to launch</p>
+          <ol class="steps">
+            <li><span><b>Apply.</b> Tell us about you and who you hope to reach.</span></li>
+            <li><span><b>Get the Field Guide.</b> Read the training materials.</span></li>
+            <li><span><b>Talk with leadership.</b> Mission, format, location and ride safety plan.</span></li>
+            <li><span><b>Background check</b> when needed, then approval.</span></li>
+            <li><span><b>Launch your crew.</b> Keep it simple and repeatable.</span></li>
+          </ol>
+        </div>
+      </div>
+
+      <div>
+        <form class="intake" id="intake" name="road-crew-leader" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+          <input type="hidden" name="form-name" value="road-crew-leader"><input type="hidden" name="subject" value="New Road Crew Leader sign-up (%{submissionId})"><p hidden><label>Leave blank <input name="bot-field"></label></p>
+          <div class="row">
+            <div class="field"><label for="i-first">First name</label><input type="text" id="i-first" name="i-first" autocomplete="given-name" required></div>
+            <div class="field"><label for="i-last">Last name</label><input type="text" id="i-last" name="i-last" autocomplete="family-name" required></div>
+          </div>
+          <div class="row">
+            <div class="field"><label for="i-email">Email</label><input type="email" id="i-email" name="i-email" autocomplete="email" required></div>
+            <div class="field"><label for="i-phone">Phone</label><input type="tel" id="i-phone" name="i-phone" autocomplete="tel"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label for="i-city">City</label><input type="text" id="i-city" name="i-city" autocomplete="address-level2" required></div>
+            <div class="field"><label for="i-state">State</label><select id="i-state" name="i-state" required><option value="">Choose…</option></select></div>
+          </div>
+          <div class="row">
+            <div class="field"><label for="i-church">Home church</label><input type="text" id="i-church" name="i-church" placeholder="Church name and city"></div>
+            <div class="field"><label for="i-bike">What do you ride?</label><input type="text" id="i-bike" name="i-bike" placeholder="Or “I don't ride yet”"></div>
+          </div>
+          <fieldset>
+            <legend>Which kind of crew could you see yourself leading?</legend>
+            <div class="choices" id="i-types">
+              <label class="choice"><input type="checkbox" name="crew_types" value="Ride Crew"> Ride Crew</label>
+              <label class="choice"><input type="checkbox" name="crew_types" value="Garage Crew"> Garage Crew</label>
+              <label class="choice"><input type="checkbox" name="crew_types" value="Bible Crew"> Bible Crew</label>
+              <label class="choice"><input type="checkbox" name="crew_types" value="Outreach Crew"> Outreach Crew</label>
+              <label class="choice"><input type="checkbox" name="crew_types" value="Family Ride Crew"> Family Ride Crew</label>
+              <label class="choice"><input type="checkbox" name="crew_types" value="Freedom Crew"> Freedom Crew</label>
+              <label class="choice"><input type="checkbox" name="crew_types" value="Not sure"> Not sure yet</label>
+            </div>
+          </fieldset>
+          <div class="field"><label for="i-why">Who are you hoping to reach, and why?</label><textarea id="i-why" name="i-why" required></textarea></div>
+          <div class="field"><label for="i-exp">Any leadership or ministry experience?</label><textarea id="i-exp" name="i-exp" placeholder="Small groups, ride captain, coaching, recovery ministry… or none yet. That's okay."></textarea></div>
+          <label class="choice"><input type="checkbox" id="i-agree" name="i-agree" required> I follow Jesus, I'm connected to a local church (or willing to be), and I'm willing to complete a background check if needed.</label>
+          <p class="err" id="i-err" hidden></p>
+          <button class="btn red" type="submit">Send me the Field Guide</button>
+        </form>
+        <div class="success" id="intake-ok" hidden>
+          <p class="label" style="color:var(--teal)">Application received</p>
+          <h3 id="ok-title">Thanks for raising your hand.</h3>
+          <p style="color:var(--ink-soft)">Your Road Crew Leader Field Guide is ready below. Read it before we talk. Someone from Filling Station leadership will reach out to <b id="ok-email"></b> within a week to set up a conversation.</p>
+          <div class="btns"><a class="btn red" href="road-crew-field-guide.pdf" target="_blank" rel="noopener">Download the Field Guide (PDF)</a></div>
+          <button class="btn ghost" type="button" id="ok-reset">Submit another</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ GIVE ============ -->
+<div class="view" id="v-give" hidden>
+  <section class="band">
+    <div class="wrap two">
+      <div class="stack">
+        <div class="prose">
+          <p class="label">Support The Filling Station</p>
+          <h2 style="color:var(--ink)">Fuel the road to Jesus for riders who'd never walk into a church.</h2>
+          <p>We go where riders already are: bike nights, rallies, garages and diners. Your gift pays for the welcome, the training, the follow-up and the help that turn a first encounter into a changed life.</p>
+          <p>Here's where it goes.</p>
+        </div>
+        <div class="pump" style="grid-template-columns:1fr;padding:24px">
+          <div class="alloc" data-alloc></div>
+        </div>
+      </div>
+
+      <div class="giver" aria-label="Give">
+        <p class="label">Fill it up</p>
+        <div class="readout"><span class="lbl">Total sale</span><span class="amt" id="g-readout">$50.00</span></div>
+        <div class="freq" role="group" aria-label="Frequency">
+          <button type="button" data-freq="once" aria-pressed="true">One time</button>
+          <button type="button" data-freq="monthly" aria-pressed="false">Monthly</button>
+        </div>
+        <div class="amts" role="group" aria-label="Amount">
+          <button type="button" data-amt="25" aria-pressed="false">$25</button>
+          <button type="button" data-amt="50" aria-pressed="true">$50</button>
+          <button type="button" data-amt="100" aria-pressed="false">$100</button>
+          <button type="button" data-amt="250" aria-pressed="false">$250</button>
+          <button type="button" data-amt="500" aria-pressed="false">$500</button>
+          <button type="button" data-amt="other" aria-pressed="false">Other</button>
+        </div>
+        <div class="field" id="g-other-wrap" hidden><label for="g-other" style="color:#f0c445">Other amount</label><input type="text" id="g-other" inputmode="decimal" placeholder="$"></div>
+        <p class="msg" id="g-impact"></p>
+        <button class="btn yellow" type="button" id="g-go">Give $50.00</button>
+        <p class="msg">You'll confirm your amount and payment details on our secure giving page.</p>
+        <p class="msg" id="g-note" hidden>Online giving is being set up. Please check back soon.</p>
+        <p class="msg">Prefer to mail a check? Make it out to The Filling Station. Mailing address coming soon.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band alt">
+    <div class="wrap">
+      <p class="label">What a gift can do</p>
+      <h2>Real things on real roads.</h2>
+      <div class="impact">
+        <div><span class="amt2">$25</span><p>Coffee, food and a welcome card for new riders at a bike night, plus a follow-up within 48 hours.</p></div>
+        <div><span class="amt2">$100</span><p>Training materials and Field Guides for a new Road Crew leader and the riders they'll lead.</p></div>
+        <div><span class="amt2">$500</span><p>Groceries, gas or a utility bill for a rider who's injured or out of work.</p></div>
+      </div>
+      <p class="note" style="color:var(--ink-soft);margin-top:16px">Example amounts. Final figures to be confirmed by leadership.</p>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap prose">
+      <p class="label">Our promise</p>
+      <h2 style="color:var(--ink)">Open books, plain answers.</h2>
+      <p>We'll report every year on what came in, where it went, and what happened because of it: riders reached, crews launched, baptisms celebrated and needs met. The goal is not just counting people. It's knowing who needs a next step.</p>
+      <p>Questions about giving? Ask us anytime.</p>
+      <p>Giving on behalf of a church? <a href="#partner">See church partnerships</a>.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ============ CHURCH PARTNERS ============ -->
+<div class="view" id="v-partner" hidden>
+  <section class="band">
+    <div class="wrap stack">
+      <div class="prose">
+        <p class="label">Church partners</p>
+        <h2 style="color:var(--ink)">Help your church reach riders who may never walk through your doors.</h2>
+        <p>Many riders are unchurched, skeptical, or carry hurt from a past church experience. They're in your community, at the gas station, the diner and the bike night down the road. The Filling Station goes where they already are.</p>
+        <p>We're a bridge to the local church, not a replacement for it. When a rider says yes to Jesus, we walk with them toward baptism and a healthy church family. Partnering with us is one way your church can be part of that.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band alt">
+    <div class="wrap">
+      <div class="prose">
+        <p class="label">Why partner</p>
+        <h2 style="color:var(--ink)">What partnership does for your church</h2>
+      </div>
+      <div class="doors">
+        <div class="door"><h3>Reach the one</h3><p>Connect with riders and riding families your church may not reach on a regular Sunday.</p></div>
+        <div class="door"><h3>Grow your church family</h3><p>New believers need a home church. We point them to local churches for baptism, teaching and community.</p></div>
+        <div class="door"><h3>Give your riders a mission</h3><p>The riders already in your pews can serve, lead a Road Crew, or join an outreach team.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="prose">
+        <p class="label">Ways to partner</p>
+        <h2 style="color:var(--ink)">Partnership can look like a lot of things.</h2>
+        <p>Pick what fits your church's size, season and calling. We'll work out the details together.</p>
+      </div>
+      <div class="doors">
+        <div class="door"><span class="label">Open your doors</span><h3>Host a Sunday 99 event</h3><p>Open your church for a Sunday 99 gathering. Like the shepherd who leaves the ninety-nine to go after the one, it's a Sunday built around welcoming riders who wouldn't normally come to church.</p></div>
+        <div class="door"><span class="label">One-time gift</span><h3>Fund an event or a need</h3><p>Sponsor a bike night, a ride, a baptism celebration, or help a rider who's injured or out of work.</p></div>
+        <div class="door"><span class="label">Recurring gift</span><h3>Be a ministry partner</h3><p>A monthly or yearly commitment that helps us train Road Crew leaders, launch new home churches and reach more riders.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band alt">
+    <div class="wrap two">
+      <div class="stack">
+        <div class="prose">
+          <p class="label">How it works</p>
+          <h2 style="color:var(--ink)">Start with a conversation.</h2>
+        </div>
+        <ol class="steps">
+          <li><span><b>Reach out.</b> Tell us about your church and what interests you.</span></li>
+          <li><span><b>Meet with leadership.</b> We'll talk through vision, beliefs and what partnership could look like.</span></li>
+          <li><span><b>Plan together.</b> Pick dates, set expectations and decide who does what.</span></li>
+          <li><span><b>Hear the stories.</b> We'll report back on riders reached, lives changed and how your support was used.</span></li>
+        </ol>
+      </div>
+      <div>
+        <form class="intake" id="partner-form" name="church-partner" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+          <input type="hidden" name="form-name" value="church-partner"><input type="hidden" name="subject" value="New Church Partner inquiry (%{submissionId})"><p hidden><label>Leave blank <input name="bot-field"></label></p>
+          <div class="field"><label for="p-church">Church name</label><input type="text" id="p-church" name="p-church" required></div>
+          <div class="row">
+            <div class="field"><label for="p-name">Your name</label><input type="text" id="p-name" name="p-name" autocomplete="name" required></div>
+            <div class="field"><label for="p-role">Your role</label><input type="text" id="p-role" name="p-role" placeholder="Pastor, elder, outreach lead…"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label for="p-email">Email</label><input type="email" id="p-email" name="p-email" autocomplete="email" required></div>
+            <div class="field"><label for="p-phone">Phone</label><input type="tel" id="p-phone" name="p-phone" autocomplete="tel"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label for="p-city">City</label><input type="text" id="p-city" name="p-city" required></div>
+            <div class="field"><label for="p-state">State</label><select id="p-state" name="p-state" required><option value="">Choose…</option></select></div>
+          </div>
+          <fieldset>
+            <legend>What are you interested in?</legend>
+            <div class="choices">
+              <label class="choice"><input type="checkbox" name="interests" value="Sunday 99"> Hosting a Sunday 99 event</label>
+              <label class="choice"><input type="checkbox" name="interests" value="One-time"> A one-time gift</label>
+              <label class="choice"><input type="checkbox" name="interests" value="Recurring"> A recurring gift</label>
+              <label class="choice"><input type="checkbox" name="interests" value="Road Crew"> Hosting a Road Crew</label>
+              <label class="choice"><input type="checkbox" name="interests" value="Talk"> Just want to talk</label>
+            </div>
+          </fieldset>
+          <div class="field"><label for="p-msg">Anything else we should know?</label><textarea id="p-msg" name="p-msg"></textarea></div>
+          <p class="err" id="p-err" hidden></p>
+          <button class="btn red" type="submit">Start the conversation</button>
+        </form>
+        <div class="success" id="partner-ok" hidden>
+          <p class="label" style="color:var(--teal)">Message received</p>
+          <h3 id="p-ok-title">Thank you for reaching out.</h3>
+          <p style="color:var(--ink-soft)">Someone from Filling Station leadership will contact <b id="p-ok-email"></b> within a week to set up a conversation.</p>
+          <button class="btn ghost" type="button" id="p-ok-reset">Send another</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="tagline">Reach the next rider.</p>
+    <p>The Filling Station · A home church network · Connect · Protect · Grow</p>
+    <p>Nonprofit status and tax-deductibility details to be added.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var STATES=["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"];
+
+  // Giving allocation — approved by leadership
+  var ALLOC=[
+    {p:"35%",t:"Outreach and first encounters",d:"Bike nights, rallies, welcome teams, coffee, food and follow-up so first-time riders feel seen and come back."},
+    {p:"25%",t:"Road Crew training and launch",d:"Field Guides, discussion guides, leader training and background checks for new home church leaders."},
+    {p:"20%",t:"Home base",d:"A permanent Filling Station home for gatherings, baptisms, training and events."},
+    {p:"15%",t:"Rider care and benevolence",d:"Practical help for injured or out-of-work riders, hospital visits, meals and recovery referrals."},
+    {p:"5%",t:"Admin and accountability",d:"The basics that keep giving safe, legal and transparent."}
+  ];
+  document.querySelectorAll("[data-alloc]").forEach(function(el){
+    el.innerHTML=ALLOC.map(function(a){return '<div class="alloc-row"><span class="pct">'+a.p+'</span><b>'+a.t+'</b><small>'+a.d+'</small></div>';}).join("");
+  });
+
+  // Crew listings
+  var CREWS=[
+    {n:"Canton Road Crew",t:"Ride Crew",c:"Canton",s:"PA",w:"Third Saturday of every month, 10:00 AM",m:"Contact for info",o:true}
+  ];
+  var fState=document.getElementById("f-state"), fType=document.getElementById("f-type");
+  var crewStates=Array.from(new Set(CREWS.map(function(c){return c.s}))).sort();
+  crewStates.forEach(function(s){var o=document.createElement("option");o.textContent=s;fState.appendChild(o);});
+  function renderCrews(){
+    var s=fState.value,t=fType.value;
+    var list=CREWS.filter(function(c){return (!s||c.s===s)&&(!t||c.t===t)});
+    document.getElementById("crew-list").innerHTML=list.map(function(c){
+      return '<article class="crew"><span class="chip">'+c.t+'</span><h3>'+c.n+'</h3><dl><dt>Where</dt><dd>'+c.c+', '+c.s+'</dd><dt>When</dt><dd>'+c.w+'</dd><dt>Address</dt><dd>'+c.m+'</dd></dl>'+
+        (c.o?'<span class="open">Open to new riders · Contact leader</span>':'<span class="full">Full this season · Join the waitlist</span>')+'</article>';
+    }).join("");
+    document.getElementById("crew-count").textContent=list.length+(list.length===1?" crew":" crews")+" found";
+    document.getElementById("crew-empty").hidden=list.length>0;
+  }
+  fState.onchange=renderCrews; fType.onchange=renderCrews;
+  document.getElementById("f-reset").onclick=function(){fState.value="";fType.value="";renderCrews();};
+  document.querySelectorAll("[data-type]").forEach(function(b){b.onclick=function(){
+    fType.value=b.dataset.type; fState.value=""; renderCrews();
+    try{history.replaceState(null,"","#crews")}catch(_){}
+    show("crews");
+    document.getElementById("finder").scrollIntoView({block:"start"});
+  }});
+  renderCrews();
+
+  // ===== SETTINGS: paste your giving page link between the quotes =====
+  var GIVE_URL="";
+  // Sends a form to Netlify Forms
+  function sendForm(f,errEl,done){
+    var btn=f.querySelector('button[type="submit"]'); var t=btn.textContent; btn.disabled=true; btn.textContent="Sending…";
+    fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams(new FormData(f)).toString()})
+      .then(function(r){if(!r.ok)throw new Error(r.status);done();})
+      .catch(function(){errEl.textContent="Your form didn't go through. Check your connection and try again.";errEl.hidden=false;})
+      .then(function(){btn.disabled=false;btn.textContent=t;});
+  }
+
+  // Intake form
+  var iState=document.getElementById("i-state");
+  STATES.forEach(function(s){var o=document.createElement("option");o.textContent=s;iState.appendChild(o);});
+  var form=document.getElementById("intake"), err=document.getElementById("i-err");
+  form.addEventListener("submit",function(e){
+    e.preventDefault();
+    var need=[["i-first","first name"],["i-last","last name"],["i-email","email"],["i-city","city"],["i-state","state"],["i-why","who you hope to reach"]];
+    var missing=need.filter(function(n){return !document.getElementById(n[0]).value.trim()}).map(function(n){return n[1]});
+    var email=document.getElementById("i-email").value.trim();
+    if(missing.length){err.textContent="Please add your "+missing.join(", ")+".";err.hidden=false;return;}
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){err.textContent="That email doesn't look right. Check it and try again.";err.hidden=false;return;}
+    if(!document.getElementById("i-agree").checked){err.textContent="Please check the box confirming the leader standards.";err.hidden=false;return;}
+    err.hidden=true;
+    document.getElementById("ok-title").textContent="Thanks for raising your hand, "+document.getElementById("i-first").value.trim()+".";
+    document.getElementById("ok-email").textContent=email;
+    sendForm(form,err,function(){form.hidden=true; document.getElementById("intake-ok").hidden=false;});
+  });
+  document.getElementById("ok-reset").onclick=function(){form.reset();form.hidden=false;document.getElementById("intake-ok").hidden=true;};
+
+  // Church partner form
+  var pState=document.getElementById("p-state");
+  STATES.forEach(function(s){var o=document.createElement("option");o.textContent=s;pState.appendChild(o);});
+  var pForm=document.getElementById("partner-form"), pErr=document.getElementById("p-err");
+  pForm.addEventListener("submit",function(e){
+    e.preventDefault();
+    var need=[["p-church","church name"],["p-name","name"],["p-email","email"],["p-city","city"],["p-state","state"]];
+    var missing=need.filter(function(n){return !document.getElementById(n[0]).value.trim()}).map(function(n){return n[1]});
+    var em=document.getElementById("p-email").value.trim();
+    if(missing.length){pErr.textContent="Please add your "+missing.join(", ")+".";pErr.hidden=false;return;}
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){pErr.textContent="That email doesn't look right. Check it and try again.";pErr.hidden=false;return;}
+    pErr.hidden=true;
+    document.getElementById("p-ok-title").textContent="Thank you, "+document.getElementById("p-church").value.trim()+".";
+    document.getElementById("p-ok-email").textContent=em;
+    sendForm(pForm,pErr,function(){pForm.hidden=true; document.getElementById("partner-ok").hidden=false;});
+  });
+  document.getElementById("p-ok-reset").onclick=function(){pForm.reset();pForm.hidden=false;document.getElementById("partner-ok").hidden=true;};
+
+  // Giving
+  var amt=50, freq="once";
+  var IMPACT=[[500,"Covers a month of help for a rider in crisis."],[250,"Launches a new Road Crew with training and materials."],[100,"Equips a new Road Crew leader with the Field Guide and training."],[25,"Welcomes a new rider at a bike night, with follow-up."],[0,"Every gallon counts. Thank you."]];
+  function fmt(n){return "$"+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",");}
+  function updateGive(){
+    var label=fmt(amt)+(freq==="monthly"?" / mo":"");
+    document.getElementById("g-readout").textContent=label;
+    document.getElementById("g-go").textContent=amt>0?"Give "+label:"Enter an amount";
+    var line=IMPACT.find(function(r){return amt>=r[0]});
+    document.getElementById("g-impact").textContent=amt>0?line[1]+(freq==="monthly"?" Every month.":""):"";
+  }
+  document.querySelectorAll("[data-amt]").forEach(function(b){b.onclick=function(){
+    document.querySelectorAll("[data-amt]").forEach(function(x){x.setAttribute("aria-pressed","false")});
+    b.setAttribute("aria-pressed","true");
+    var other=b.dataset.amt==="other";
+    document.getElementById("g-other-wrap").hidden=!other;
+    if(other){var v=parseFloat(document.getElementById("g-other").value.replace(/[^0-9.]/g,""));amt=isNaN(v)?0:v;document.getElementById("g-other").focus();}
+    else amt=+b.dataset.amt;
+    updateGive();
+  }});
+  document.getElementById("g-other").oninput=function(){var v=parseFloat(this.value.replace(/[^0-9.]/g,""));amt=isNaN(v)?0:v;updateGive();};
+  document.querySelectorAll("[data-freq]").forEach(function(b){b.onclick=function(){
+    document.querySelectorAll("[data-freq]").forEach(function(x){x.setAttribute("aria-pressed","false")});
+    b.setAttribute("aria-pressed","true");freq=b.dataset.freq;updateGive();
+  }});
+  document.getElementById("g-go").onclick=function(){if(GIVE_URL){window.open(GIVE_URL,"_blank","noopener");}else{document.getElementById("g-note").hidden=false;}};
+  updateGive();
+
+  // Home: scroll reveals + parallax
+  var calm=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var home=document.getElementById("v-home");
+  if(!calm){
+    var groups=["h2",".prose > p",".journey li",".flow > div",".door",".alloc-row",".pump .btns",".crew",".type",".steps li",".checklist li",".impact > div",".finder","form.intake",".giver",".btns"];
+    var io=("IntersectionObserver" in window)?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.remove("pre");io.unobserve(e.target);}})},{rootMargin:"0px 0px -8% 0px",threshold:0.1}):null;
+    var done={};
+    window.__initReveal=function(view){
+      if(done[view.id])return; done[view.id]=true;
+      groups.forEach(function(sel){
+        view.querySelectorAll(sel).forEach(function(el){
+          if(el.closest(".hero")||el.classList.contains("reveal"))return;
+          var i=Array.prototype.indexOf.call(el.parentNode.children,el);
+          el.style.setProperty("--d",Math.min(i*0.07,0.5)+"s");
+          el.classList.add("reveal"); if(el.tagName==="H2")el.classList.add("slide");
+        });
+      });
+      if(io)view.querySelectorAll(".reveal").forEach(function(el){
+        if(el.getBoundingClientRect().top>innerHeight*0.92){el.classList.add("pre");io.observe(el);}
+      });
+    };
+    var sign=home.querySelector(".sign"), ticking=false;
+    function par(){
+      ticking=false;
+      var view=document.querySelector(".view:not([hidden])"); if(!view)return;
+      view.querySelectorAll(":scope > section:first-child,.band.alt").forEach(function(el){var r=el.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;el.style.setProperty("--py",(r.top*-0.18).toFixed(1)+"px");});
+      if(sign&&!home.hidden)sign.style.setProperty("--sy",Math.min(scrollY*0.12,90).toFixed(1)+"px");
+    }
+    addEventListener("scroll",function(){if(!ticking){ticking=true;requestAnimationFrame(par);}},{passive:true});
+    addEventListener("resize",par);
+    window.__par=par;
+  }
+
+  // Views
+  var VIEWS=["home","crews","types","lead","partner","give"];
+  function show(v){
+    if(VIEWS.indexOf(v)<0)v="home";
+    VIEWS.forEach(function(x){document.getElementById("v-"+x).hidden=x!==v});
+    document.querySelectorAll("nav.main a").forEach(function(a){a.dataset.view===(v==="types"?"crews":v)?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current")});
+    window.scrollTo(0,0);
+    var cur=document.getElementById("v-"+v);
+    if(window.__initReveal)window.__initReveal(cur);
+    if(window.__par)window.__par();
+  }
+  document.addEventListener("click",function(e){
+    var a=e.target.closest('a[href^="#"]'); if(!a)return;
+    var v=a.getAttribute("href").slice(1); if(VIEWS.indexOf(v)<0)return;
+    e.preventDefault(); try{history.replaceState(null,"","#"+v)}catch(_){}
+    show(v);
+  });
+  show((location.hash||"#home").slice(1));
+})();
+</script>
+</body>
+</html>
